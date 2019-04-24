@@ -1,0 +1,81 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_arith.ALL;
+use IEEE.STD_LOGIC_unsigned.ALL;
+
+-- counter
+entity counter is Port ( 
+		clk_i:in std_logic; 
+		ms_1 : out std_logic; 
+		ms_10 : out std_logic; 
+		s_05 : out std_logic; 
+		s_1 : out std_logic);
+end counter;
+
+architecture Behavioral of counter is
+
+signal counter_1 : STD_LOGIC_VECTOR(17 downto 0) := (others =>'0');
+signal counter_2 : STD_LOGIC_VECTOR(3 downto 0) := (others =>'0');
+signal counter_3 : STD_LOGIC_VECTOR(5 downto 0) := (others =>'0');
+signal freq_1kHz : STD_LOGIC := '0';
+signal freq_100Hz : STD_LOGIC := '0';
+signal freq_2Hz : STD_LOGIC := '0';
+signal freq_1Hz : STD_LOGIC := '0';
+begin
+
+--cnt for display
+kHz1:process (clk_i)
+begin
+	if clk_i='1' and clk_i'event then
+	counter_1 <= counter_1 +1;
+	
+		if counter_1 = "011110100001001000" then
+		counter_1 <= (others => '0');
+		freq_1kHz <= '1';
+		else
+		freq_1kHz <= '0';
+		end if;
+		
+	   ms_1 <= freq_1kHz;
+	end if;
+end process;
+
+--counter for stopwatch
+ms10:process(clk_i)
+begin
+	if clk_i='1' and clk_i'event then
+		if freq_1kHz = '1' then
+		counter_2 <= counter_2 + 1;
+			if counter_2 = "1010" then
+			counter_2 <= (others => '0');
+			freq_100Hz <= '1';
+			end if;
+			
+			else
+			freq_100Hz <= '0';
+			end if;
+	ms_10 <= freq_100Hz;
+	end if;
+end process;
+
+Hz2:process(clk_i)
+begin
+	if clk_i='1' and clk_i'event then 
+		if freq_100Hz = '1' then
+		counter_3 <= counter_3 + 1;
+			if counter_3 = "110001" then
+			counter_3 <= (others => '0');
+			freq_2Hz <= '1';
+			end if;
+		else
+		freq_2Hz <= '0';
+		end if;
+	s_05 <= freq_2Hz;
+	end if;
+end process;
+
+end process;
+end Behavioral;
+
+
+
